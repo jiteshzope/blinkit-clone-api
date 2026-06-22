@@ -1,0 +1,20 @@
+{
+  "name": "blinkit-clone-api",
+  "version": "1.0.0",
+  "description": "This is my node.js server for angular app for blinkit clone",
+  "main": "app.js",
+  "scripts": {
+    "test": "test",
+    "dev": "nodemon app.js"
+  },
+  "author": "Bubbesh",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
