@@ -21,3 +21,17 @@ const categorySchema = new mongoose.Schema({
 const Category = mongoose.model("Category", categorySchema); // creating a mongoose model --> Category
 
 module.exports.Category = Category; // exporting the mongoose model so that it can be used in other files.
+
+// *******************************************************************
+
+const productSchema = new mongoose.Schema({
+    productName: { type: String, required: true },
+    imageUrl: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }
+}, { collection: "Products" });
+
+const Product = mongoose.model("Product", productSchema); // creating a mongoose model --> Product
+
+module.exports.Product = Product; // exporting the mongoose model so that it can be used in other files.

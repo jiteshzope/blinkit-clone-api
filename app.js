@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require("mongoose");
 const AdminUser = require("./models").AdminUser;
 const Category = require("./models").Category;
+const Product = require("./models").Product;
 
 // by default nodejs has process.env object, and to make all the environment variables available in the process.env object, we need to use dotenv package and call config() method on it.
 require("dotenv").config();
@@ -69,9 +70,61 @@ server.get('/categories', (req, res, next) => {
     console.error('Error fetching categories:', err);
     res.status(500).json({ message: 'Internal server error' });
   });
-  
+
 });
 
+server.put('/edit-category/:id', (req, res, next) => {
+  const categoryId = req.params.id;
+  const updatedData = {
+    categoryName: req.body?.categoryName,
+    imageUrl: req.body?.categoryImage,
+    description: req.body?.categoryDescription
+  };
+
+  Category.findByIdAndUpdate(categoryId, updatedData).then((updatedCategory) => {
+    if (updatedCategory) {
+      res.status(200).json({ message: 'Category updated successfully', category: updatedCategory });
+    } else {
+      res.status(404).json({ message: 'Category not found' });
+    }
+  }).catch((err) => {
+    console.error('Error updating category:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
+});
+
+server.post('/add-product', (req, res, next) => {
+  const productName = req.body?.productName;
+  const imageUrl = req.body?.productImage;
+  const description = req.body?.productDescription;
+  const price = req.body?.productPrice;
+  const categoryId = req.body?.categoryId;
+
+  if (!productName || !imageUrl || !description || !price || !categoryId) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const newProduct = new Product({ productName, imageUrl, description, price, categoryId });
+
+  newProduct.save().then((product) => {
+    res.status(201).json({ message: 'Product created successfully', product });
+  }).catch((err) => {
+    console.error('Error creating product:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
+});
+
+server.get('/products/:categoryId', (req, res, next) => {
+  const categoryId = req.params.categoryId;
+
+  Product.find({ categoryId: categoryId }).then((products) => {
+    res.status(200).json({ products: products });
+  }).catch((err) => {
+    console.error('Error fetching products:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
+  
+});
 
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
