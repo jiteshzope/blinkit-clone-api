@@ -35,3 +35,18 @@ const productSchema = new mongoose.Schema({
 const Product = mongoose.model("Product", productSchema); // creating a mongoose model --> Product
 
 module.exports.Product = Product; // exporting the mongoose model so that it can be used in other files.
+
+
+// **********************************************************
+
+const UserSchema = new mongoose.Schema({
+    userName: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    mobile: { type: String, required: true },
+    address: { type: String, required: true }
+}, { collection: "Users" });
+
+const User = mongoose.model("User", UserSchema); // creating a mongoose model --> User
+
+module.exports.User = User; // exporting the mongoose model so that it can be used in other files.

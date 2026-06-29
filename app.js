@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const AdminUser = require("./models").AdminUser;
 const Category = require("./models").Category;
 const Product = require("./models").Product;
+const User = require("./models").User;
 
 // by default nodejs has process.env object, and to make all the environment variables available in the process.env object, we need to use dotenv package and call config() method on it.
 require("dotenv").config();
@@ -123,9 +124,25 @@ server.get('/products/:categoryId', (req, res, next) => {
     console.error('Error fetching products:', err);
     res.status(500).json({ message: 'Internal server error' });
   });
-  
+
 });
 
+server.post('/auth/user/register', (req, res, next) => {
+  const { userName, email, password, mobile, address } = req.body;
+
+  if (!userName || !email || !password || !mobile || !address) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const newUser = new User({ userName, email, password, mobile, address });
+
+  newUser.save().then((user) => {
+    res.status(201).json({ message: 'User registered successfully', user });
+  }).catch((err) => {
+    console.error('Error registering user:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
+});
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log('Connected to MongoDB');
