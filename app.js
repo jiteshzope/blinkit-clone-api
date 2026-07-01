@@ -127,6 +127,27 @@ server.get('/products/:categoryId', (req, res, next) => {
 
 });
 
+server.put('/edit-product/:id', (req, res, next) => {
+  const productId = req.params.id;
+  const updatedProductData = {
+    productName: req.body?.productName,
+    description : req.body?.productDescription,
+   imageUrl : req.body?.productImage,
+   price : req.body?.productPrice
+  };
+  //here we are using findByIdAndUpdate method so this method will find the product and update it
+  Product.findByIdAndUpdate(productId , updatedProductData).then((updatedProduct) => {
+    if (updatedProduct) {
+      res.status(200).json({ message: 'product updated successfully', product: updatedProduct });
+    } else {
+      res.status(404).json({ message: 'product not found' });
+    }
+  }).catch((err) => {
+    console.error('Error updating product:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  });
+});
+
 server.post('/auth/user/register', (req, res, next) => {
   const { userName, email, password, mobile, address } = req.body;
 
@@ -143,6 +164,25 @@ server.post('/auth/user/register', (req, res, next) => {
     res.status(500).json({ message: 'Internal server error' });
   });
 });
+
+
+server.post('/auth/user/login',(req,res,next)=>{
+  const {userName,password}= req.body
+  if (!userName || !password){
+    res.status(400).json({message:'username and password are required'})  
+  }
+
+  User.findOne({userName,password}).then((user)=>{
+    if (user){
+      return res.status(200).json({message:'login successful',user})
+    }else{
+      return res.status(401).json({message:'invalid username or password'})
+    }
+  }).catch((err)=>{
+    console.error('error during user login:',err);
+    res.status(500).json({message:'internal server error'})
+  })
+})
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log('Connected to MongoDB');
